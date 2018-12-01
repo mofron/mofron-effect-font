@@ -14,6 +14,7 @@ mf.effect.Font = class extends mf.Effect {
             super();
             this.name('Font');
             this.prmMap(['fontName', 'path']);
+            this.suspend(false, true);
             this.prmOpt(po, p2);
         } catch (e) {
             console.error(e.stack);
@@ -62,7 +63,9 @@ mf.effect.Font = class extends mf.Effect {
      */
     enable (cmp) {
         try {
-            mofron.func.setFontFace(this.fontName(), this.path());
+            if (null !== this.path()) {
+                mofron.func.setFontFace(this.fontName(), this.path());
+            }
             cmp.style({ 'font-family' : this.fontName() });
         } catch (e) {
             console.error(e.stack);
