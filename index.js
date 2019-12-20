@@ -1,20 +1,24 @@
 /**
  * @file mofron-effect-font/index.js
+ : @brief set text font for mofron-comp-text component
  * @author simpart
  */
-const mf = require('mofron');
-/**
- * @class Font
- * @brief font effect class
- */
-mf.effect.Font = class extends mf.Effect {
+const comutl = mofron.util.common;
+
+module.exports = class extends mofron.class.Effect {
     
-    constructor (po, p2) {
+    constructor (p1,p2) {
         try {
             super();
-            this.name('Font');
-            this.prmMap(['fontName', 'path']);
-            this.prmOpt(po, p2);
+            this.name("Font");
+            
+	    this.confmng().add("family", { type: "array" });
+            this.confmng().add("path", { type: "string" });
+
+            this.shortForm("family", "path");
+	    if (0 < arguments.length) {
+                this.config(p1,p2);
+            }
         } catch (e) {
             console.error(e.stack);
             throw e;
@@ -24,17 +28,25 @@ mf.effect.Font = class extends mf.Effect {
     /**
      * setter/getter font name
      *
-     * @param p1 (string) primary font name
-     * @param p2 (string) secondary font name
-     * @return (string) font name
+     * @param (string) primary font name
+     * @param (string) secondary font name
+     * @return (array) font name [primary, secondary]
      */
-    fontName (p1, p2) {
+    family (p1, p2) {
         try {
-            return this.member(
-                'fontName',
-                'string',
-                ( (undefined !== p1) && (undefined !== p2) ) ? prm + ',' + p2 : p1
-            );
+	    if (0 === arguments.length) {
+                /* getter */
+		let ret = this.confmng("family");
+                if ( (null === ret) || ("string" !== typeof ret[0]) ) {
+                    throw new Error("invalid parameter");
+		}
+                return (undefined !== ret[1]) ? ret[0] + "," + ret[1] : ret[0];
+	    }
+	    /* setter */
+	    if (("string" !== typeof p1) || ((undefined !== p2) && ("string" !== typeof p2)) ) {
+                throw new Error("invalid parameter");
+	    }
+	    return this.confmng("family", [p1,p2]);
         } catch (e) {
             console.error(e.stack);
             throw e;
@@ -49,12 +61,40 @@ mf.effect.Font = class extends mf.Effect {
      * @return path to font
      */
     path (prm) {
-        try { return this.member('path', 'string', prm); } catch (e) {
+        try {
+	    return this.confmng("path", prm);
+	} catch (e) {
             console.error(e.stack);
             throw e;
         }
     }
     
+    addFontFace () {
+        try {
+            /* format */
+            let pth_spt = this.path().split('.');
+            let format  = '';
+            if ('woff' === pth_spt[pth_spt.length-1]) {
+                format = "format('woff')";
+            } else if ('ttf' === pth_spt[pth_spt.length-1]) {
+                format = "format('truetype')";
+            } else if ('otf' === pth_spt[pth_spt.length-1]) {
+                format = "format('opentype')";
+            } else if ('eot' === pth_spt[pth_spt.length-1]) {
+                format = "format('embedded-opentype')";
+            } else if ( ('svg' === pth_spt[pth_spt.length-1]) || ('svgz' === pth_spt[pth_spt.length-1])) {
+                format = "format('svg')";
+            }
+	    let val = "@font-face {";
+	    val += "font-family:" + this.confmng().get("family")[0] + ",";
+	    val += "src:" + "url('" + this.path() + "') " + format + "}";
+	    comutl.addhead("style", { type: "text/css" }, val);
+	} catch (e) {
+            console.error(e.stack);
+            throw e;
+	}
+    }
+
     /**
      * enable text font
      *
@@ -63,14 +103,13 @@ mf.effect.Font = class extends mf.Effect {
     contents (cmp) {
         try {
             if (null !== this.path()) {
-                mofron.func.setFontFace(this.fontName(), this.path());
-            }
-            cmp.style({ 'font-family' : this.fontName() });
+	        this.addFontFace();
+            } 
+            cmp.style({ 'font-family' : this.family() });
         } catch (e) {
             console.error(e.stack);
             throw e;
         }
     }
 }
-module.exports = mf.effect.Font;
 /* end of file */
