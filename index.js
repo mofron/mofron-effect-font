@@ -1,12 +1,22 @@
 /**
  * @file mofron-effect-font/index.js
- : @brief set text font for mofron-comp-text component
+ * @brief text font for mofron-comp-text component
+ *        format configure for each file automatically if you use local font
+ * @attention this effect is private, this function is included in text component. so you don't need to use directly
  * @author simpart
  */
 const comutl = mofron.util.common;
 
 module.exports = class extends mofron.class.Effect {
-    
+    /**
+     * constructor
+     * 
+     * @param (mixed) text,conf-arg: font family
+     *                object: effect config
+     * @param (string) font path
+     * @short family,path
+     * @type private
+     */
     constructor (p1,p2) {
         try {
             super();
@@ -30,7 +40,9 @@ module.exports = class extends mofron.class.Effect {
      *
      * @param (string) primary font name
      * @param (string) secondary font name
-     * @return (array) font name [primary, secondary]
+     * @return (mixed) string: font name
+     *                 array: [primary, secondary]
+     * @type parameter
      */
     family (p1, p2) {
         try {
@@ -40,7 +52,7 @@ module.exports = class extends mofron.class.Effect {
                 if ( (null === ret) || ("string" !== typeof ret[0]) ) {
                     throw new Error("invalid parameter");
 		}
-                return (undefined !== ret[1]) ? ret[0] + "," + ret[1] : ret[0];
+                return (undefined !== ret[1]) ? ret : ret[0];
 	    }
 	    /* setter */
 	    if (("string" !== typeof p1) || ((undefined !== p2) && ("string" !== typeof p2)) ) {
@@ -54,11 +66,11 @@ module.exports = class extends mofron.class.Effect {
     }
     
     /**
-     * setter/getter path to font
+     * setter/getter path to font file for local font
      * 
-     * @param prm (string) path to font
-     * @param prm (undefined) call as getter
-     * @return path to font
+     * @param (string) path to font file
+     * @return (string) path to font
+     * @type parameter
      */
     path (prm) {
         try {
@@ -68,7 +80,13 @@ module.exports = class extends mofron.class.Effect {
             throw e;
         }
     }
-    
+
+    /**
+     * add font-face to style in head tag
+     * set format value every file type
+     * 
+     * @type private
+     */
     addFontFace () {
         try {
             /* format */
@@ -96,16 +114,19 @@ module.exports = class extends mofron.class.Effect {
     }
 
     /**
-     * enable text font
-     *
-     * @note private method
+     * set text font
+     * 
+     * @param (component) target component object
+     * @type private
      */
     contents (cmp) {
         try {
             if (null !== this.path()) {
 	        this.addFontFace();
-            } 
-            cmp.style({ 'font-family' : this.family() });
+            }
+	    let fm      = this.family();
+	    let set_val = (true === Array.isArray(fm)) ? fm[0]+','+fm[1] : fm;
+            cmp.style({ 'font-family' : set_val });
         } catch (e) {
             console.error(e.stack);
             throw e;
