@@ -1,6 +1,6 @@
 {
   "name": "mofron-effect-font",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "font effect for mofron component",
   "main": "index.js",
   "scripts": {
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/simpart/mofron-effect-font.git"
+    "url": "git+https://github.com/mofron/mofron-effect-font.git"
   },
   "keywords": [
-    "front-end"
+    "front-end", "mofron"
   ],
   "author": "simparts",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/simpart/mofron-effect-font/issues"
+    "url": "https://github.com/mofron/mofron-effect-font/issues"
   },
-  "homepage": "https://github.com/simpart/mofron-effect-font#readme"
+  "homepage": "https://github.com/mofron/mofron-effect-font#readme"
 }

@@ -1,33 +1,32 @@
 /**
  * @file mofron-effect-font/index.js
- * @brief text font for mofron-comp-text component
+ * @brief set text font for mofron-comp-text component
  *        format configure for each file automatically if you use local font
  * @attention this effect is private, this function is included in text component. so you don't need to use directly
- * @author simpart
+ * @license MIT
  */
 const comutl = mofron.util.common;
 
 module.exports = class extends mofron.class.Effect {
     /**
-     * constructor
+     * initialize effect
      * 
-     * @param (mixed) text,conf-arg: font family
-     *                object: effect config
-     * @param (string) font path
-     * @short family,path
+     * @param (mixed) short-form parameter
+     *                key-value: effect config
+     * @short fname,path
      * @type private
      */
-    constructor (p1,p2) {
+    constructor (prm) {
         try {
             super();
             this.name("Font");
-            
-	    this.confmng().add("family", { type: "array" });
+            this.shortForm("fname", "path");
+            /* init config */
+	    this.confmng().add("fname", { type: "array" });
             this.confmng().add("path", { type: "string" });
-
-            this.shortForm("family", "path");
-	    if (0 < arguments.length) {
-                this.config(p1,p2);
+            /* set config */
+	    if (undefined !== prm) {
+                this.config(prm);
             }
         } catch (e) {
             console.error(e.stack);
@@ -36,29 +35,28 @@ module.exports = class extends mofron.class.Effect {
     }
     
     /**
-     * setter/getter font name
+     * font name setter/getter
      *
-     * @param (string) primary font name
+     * @param (mixed) string: primary font name
+     *                undefined: call as getter
      * @param (string) secondary font name
-     * @return (mixed) string: font name
-     *                 array: [primary, secondary]
-     * @type parameter
+     * @return (array) font name [primary, secondary]
      */
-    family (p1, p2) {
+    fname (p1, p2) {
         try {
 	    if (0 === arguments.length) {
                 /* getter */
-		let ret = this.confmng("family");
-                if ( (null === ret) || ("string" !== typeof ret[0]) ) {
-                    throw new Error("invalid parameter");
-		}
-                return (undefined !== ret[1]) ? ret : ret[0];
+		return this.confmng("fname");
 	    }
 	    /* setter */
-	    if (("string" !== typeof p1) || ((undefined !== p2) && ("string" !== typeof p2)) ) {
+	    if ( ("string" !== typeof p1) ||
+	         ((undefined !== p2) && ("string" !== typeof p2)) ) {
                 throw new Error("invalid parameter");
 	    }
-	    return this.confmng("family", [p1,p2]);
+	    let set_val = [undefined,undefined];
+	    set_val[0]  = (-1 !== p1.indexOf(" ")) ? "'" + p1 + "'" : p1;
+	    set_val[1]  = (-1 !== p2.indexOf(" ")) ? "'" + p2 + "'" : p2;
+	    this.confmng("fname", set_val);
         } catch (e) {
             console.error(e.stack);
             throw e;
@@ -66,11 +64,11 @@ module.exports = class extends mofron.class.Effect {
     }
     
     /**
-     * setter/getter path to font file for local font
+     * setter/getter path to font
      * 
-     * @param (string) path to font file
-     * @return (string) path to font
-     * @type parameter
+     * @param (mixed) string: path to font
+     *                undefined: call as getter
+     * @return path to font
      */
     path (prm) {
         try {
@@ -80,14 +78,14 @@ module.exports = class extends mofron.class.Effect {
             throw e;
         }
     }
-
+    
     /**
-     * add font-face to style in head tag
-     * set format value every file type
+     * set font-face setting in style tag
      * 
+     * @param (string) font-family value
      * @type private
      */
-    addFontFace () {
+    addFontFace (fnm) {
         try {
             /* format */
             let pth_spt = this.path().split('.');
@@ -104,9 +102,9 @@ module.exports = class extends mofron.class.Effect {
                 format = "format('svg')";
             }
 	    let val = "@font-face {";
-	    val += "font-family:" + this.confmng().get("family")[0] + ",";
+	    val += "font-family:" + fnm + ",";
 	    val += "src:" + "url('" + this.path() + "') " + format + "}";
-	    comutl.addhead("style", { type: "text/css" }, val);
+	    comutl.addhead("style", { type: "text/css", test:"test" }, val);
 	} catch (e) {
             console.error(e.stack);
             throw e;
@@ -115,18 +113,21 @@ module.exports = class extends mofron.class.Effect {
 
     /**
      * set text font
-     * 
-     * @param (component) target component object
+     *
+     * @param (mofron.class.Component) component object
      * @type private
      */
     contents (cmp) {
         try {
-            if (null !== this.path()) {
-	        this.addFontFace();
+            let fname = this.fname();
+            if (null === fname) {
+                throw new Error("could not find font name config");
             }
-	    let fm      = this.family();
-	    let set_val = (true === Array.isArray(fm)) ? fm[0]+','+fm[1] : fm;
-            cmp.style({ 'font-family' : set_val });
+	    let set_fnt = (undefined === fname[1]) ? fname[0] : fname[0]+','+fname[1];
+            if (null !== this.path()) {
+	        this.addFontFace(set_fnt);
+            } 
+            cmp.style({ 'font-family' : set_fnt });
         } catch (e) {
             console.error(e.stack);
             throw e;
