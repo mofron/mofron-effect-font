@@ -39,8 +39,10 @@ module.exports = class extends mofron.class.Effect {
      *
      * @param (mixed) string: primary font name
      *                undefined: call as getter
-     * @param (string) secondary font name
+     * @param (string) secondary font name (not required)
      * @return (array) font name [primary, secondary]
+     *                 null: not set
+     * @type parameter
      */
     fname (p1, p2) {
         try {
@@ -55,7 +57,9 @@ module.exports = class extends mofron.class.Effect {
 	    }
 	    let set_val = [undefined,undefined];
 	    set_val[0]  = (-1 !== p1.indexOf(" ")) ? "'" + p1 + "'" : p1;
-	    set_val[1]  = (-1 !== p2.indexOf(" ")) ? "'" + p2 + "'" : p2;
+	    if ("string" === typeof p2) {
+	        set_val[1]  = (-1 !== p2.indexOf(" ")) ? "'" + p2 + "'" : p2;
+            }
 	    this.confmng("fname", set_val);
         } catch (e) {
             console.error(e.stack);
@@ -68,7 +72,9 @@ module.exports = class extends mofron.class.Effect {
      * 
      * @param (mixed) string: path to font
      *                undefined: call as getter
-     * @return path to font
+     * @return (string) path to font
+     *                  null: not set
+     * @type parameter
      */
     path (prm) {
         try {

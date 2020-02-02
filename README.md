@@ -1,7 +1,7 @@
 # mofron-effect-font
 [mofron](https://mofron.github.io/mofron/) is module based frontend framework.
 
-text font for mofron-comp-text component
+set text font for mofron-comp-text component
 
 format configure for each file automatically if you use local font
 
@@ -17,8 +17,9 @@ npm install mofron mofron-effect-font
 
 | Short<br>Form | Parameter Name | Type | Description |
 |:-------------:|:---------------|:-----|:------------|
-| ◯  | family | string | primary font name |
-| | | string | secondary font name |
-| ◯  | path | string | path to font file |
-| | addFontFace | | | contents | component | target component object |
+| ◯  | fname | mixed | string: primary font name |
+| | | | undefined: call as getter |
+| | | string | secondary font name (not required) |
+| ◯  | path | mixed | string: path to font |
+| | | | undefined: call as getter |
 
