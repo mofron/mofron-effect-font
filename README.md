@@ -22,4 +22,6 @@ npm install mofron mofron-effect-font
 | | | string | secondary font name (not required) |
 | ◯  | path | mixed | string: path to font |
 | | | | undefined: call as getter |
+| | src | mixed | string: path to font |
+| | | | undefined: call as getter |
 

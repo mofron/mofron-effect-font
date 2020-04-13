@@ -1,6 +1,6 @@
 {
   "name": "mofron-effect-font",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "font effect for mofron component",
   "main": "index.js",
   "scripts": {

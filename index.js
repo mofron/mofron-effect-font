@@ -11,12 +11,13 @@ module.exports = class extends mofron.class.Effect {
     /**
      * initialize effect
      * 
-     * @param (mixed) short-form parameter
+     * @param (mixed) fname parameter
      *                key-value: effect config
+     * @param (string) path parameter
      * @short fname,path
      * @type private
      */
-    constructor (prm) {
+    constructor (p1,p2) {
         try {
             super();
             this.name("Font");
@@ -25,8 +26,8 @@ module.exports = class extends mofron.class.Effect {
 	    this.confmng().add("fname", { type: "array" });
             this.confmng().add("path", { type: "string" });
             /* set config */
-	    if (undefined !== prm) {
-                this.config(prm);
+	    if (0 < arguments.length) {
+                this.config(p1,p2);
             }
         } catch (e) {
             console.error(e.stack);
@@ -84,6 +85,25 @@ module.exports = class extends mofron.class.Effect {
             throw e;
         }
     }
+    
+    /**
+     * setter/getter path to font, same as path config
+     * 
+     * @param (mixed) string: path to font
+     *                undefined: call as getter
+     * @return (string) path to font
+     *                  null: not set
+     * @type parameter
+     */
+    src (prm) {
+        try {
+            return this.confmng("path", prm);
+        } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+
     
     /**
      * set font-face setting in style tag
